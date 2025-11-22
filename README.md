@@ -33,6 +33,5 @@ To do...
 - Keyboard (excluding extrusions): 151.5 x 59 x 12.2 mm
 - Raspberry Pi (PCB only): 85 x 56 mm (consider adding a little bit to the 85 so the USB ports dont stick out)
 - Display (incl. feet): 106.2 x 68.1 x 12 mm
-
 - Box thickness: 1.6 (everywhere)
 
