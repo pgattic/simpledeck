@@ -76,6 +76,45 @@ BOX_LENGTH = BATTERY_LENGTH + RPI_LENGTH;
 BOX_HEIGHT = BATTERY_THICKNESS + KEYBOARD_THICKNESS;
 BOX_DIMENSIONS = [BOX_WIDTH, BOX_LENGTH, BOX_HEIGHT];
 
+module rpi_support() {
+  base_height = 3.5; // stolen from original pi_hole_height variable, needs confirmation
+  cylinder(base_height, r=3, $fn=24);
+  translate([0, 0, base_height]) cylinder(3, r=1.5, $fn=24);
+}
+
+module display_shelf() {
+  fn = 64;
+  outer_rad = 4;
+  inner_rad = 3;
+  height = 12;
+  taper = 8;
+
+  translate([0, -outer_rad, 0]) difference() {
+    translate([0, 0, -height]) union() {
+      cylinder(height, r=outer_rad, $fn=fn);
+      translate([-outer_rad, 0, 0]) cube([outer_rad*2, outer_rad, height]);
+    }
+    translate([0, 0, -height-0.001]) polyhedron(
+      points = [
+        [-outer_rad-.001, -outer_rad, taper],
+        [ outer_rad+.001, -outer_rad, taper],
+        [-outer_rad-.001, -outer_rad, 0],
+        [ outer_rad+.001, -outer_rad, 0],
+        [-outer_rad-.001,  outer_rad, 0],
+        [ outer_rad+.001,  outer_rad, 0]
+      ],
+      faces = [
+        [0, 1, 2], [2, 1, 3],
+        [1, 0, 4], [1, 4, 5],
+        [0, 2, 4],
+        [3, 1, 5],
+        [2, 3, 4], [4, 3, 5]
+      ]
+    );
+    translate([0, 0, -height]) cylinder(height+0.001, r=inner_rad, $fn=fn);
+  }
+}
+
 /// Holes for RPi's USB and ethernet ports
 module left_holes() {
   translate([3,    0]) square([13, 14]);
@@ -112,6 +151,14 @@ module bottom_shell() {
     translate([0, BOX_LENGTH, 0]) rotate([90, 0]) scale([1, 1, 4])
       back_holes();
   }
+  // FIXME: Positions/dimensions of shelves are eyeballed
+  translate([64,  BOX_LENGTH, 24]) display_shelf();
+  translate([138, BOX_LENGTH, 24]) display_shelf();
+  // FIXME: Positions/dimensions of supports are eyeballed
+  translate([25, BOX_LENGTH - 5,  0]) rpi_support();
+  translate([25, BOX_LENGTH - 50, 0]) rpi_support();
+  translate([90, BOX_LENGTH - 5,  0]) rpi_support();
+  translate([90, BOX_LENGTH - 50, 0]) rpi_support();
 }
 
 bottom_shell();
