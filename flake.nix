@@ -1,5 +1,5 @@
 {
-  description = "SimpleDeck Development Shell (FreeCAD)";
+  description = "SimpleDeck Development Shell (OpenSCAD)";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -13,7 +13,7 @@
     in {
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
-          freecad
+          openscad
         ];
       };
     };
