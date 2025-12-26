@@ -17,15 +17,21 @@ A Glueless, Solderless Raspberry Pi 4 Cyberdeck
 
 To do...
 
+## Dev Instructions
+
+- `nix develop`
+- `openscad src/box.scad`
+
 ## Software
 
-- The case was modeled using [FreeCAD](https://www.freecad.org/)
+- The case was modeled using [OpenSCAD](https://openscad.org/)
 - My NixOS configuration for the Raspberry Pi itself can be found in my [dotfiles repository](https://github.com/pgattic/dotfiles/tree/main/hosts/cyberpi), but Raspberry Pi OS works perfectly fine.
 
 ## Thanks
 
 - [chrisicksix](https://makerworld.com/en/@chrisicksix) on MakerWorld for sharing your [cyberdeck](https://makerworld.com/en/models/1440390-cyberdeck-raspberry-pi-4-5). It's what got me started!
 - BambuLabs for making 3D printing simple and accessible
+- OpenSCAD for making CAD so accessible to software nerds
 
 ## Notes
 
