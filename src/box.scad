@@ -94,14 +94,14 @@ module display_shelf() {
       cylinder(height, r=outer_rad, $fn=fn);
       translate([-outer_rad, 0, 0]) cube([outer_rad*2, outer_rad, height]);
     }
-    translate([0, 0, -height-0.001]) polyhedron(
+    translate([0, 0, -height]) polyhedron(
       points = [
-        [-outer_rad-.001, -outer_rad, taper],
-        [ outer_rad+.001, -outer_rad, taper],
-        [-outer_rad-.001, -outer_rad, 0],
-        [ outer_rad+.001, -outer_rad, 0],
-        [-outer_rad-.001,  outer_rad, 0],
-        [ outer_rad+.001,  outer_rad, 0]
+        [-outer_rad, -outer_rad, taper],
+        [ outer_rad, -outer_rad, taper],
+        [-outer_rad, -outer_rad, 0],
+        [ outer_rad, -outer_rad, 0],
+        [-outer_rad,  outer_rad, 0],
+        [ outer_rad,  outer_rad, 0]
       ],
       faces = [
         [0, 1, 2], [2, 1, 3],
@@ -111,7 +111,7 @@ module display_shelf() {
         [2, 3, 4], [4, 3, 5]
       ]
     );
-    translate([0, 0, -height]) cylinder(height+0.001, r=inner_rad, $fn=fn);
+    translate([0, 0, -height]) cylinder(height, r=inner_rad, $fn=fn);
   }
 }
 
@@ -130,10 +130,12 @@ module right_holes() {
 
 /// Holes for other RPi ports
 module back_holes() {
-  translate([34.2, 6.1]) circle(3.265, $fn=24);
-  translate([45, 2.95]) square([7.5, 3.9]);
-  translate([58.5, 2.95]) square([7.5, 3.9]);
-  translate([73.8, 2.95 + (3.6 / 2)]) offset(r = 1.8, $fn=24) square([6, 0.001]);
+  scale([-1, 1]) {
+    translate([34.2, 6.1]) circle(3.265, $fn=24);
+    translate([45, 2.95]) square([7.5, 3.9]);
+    translate([58.5, 2.95]) square([7.5, 3.9]);
+    translate([73.8, 2.95 + (3.6 / 2)]) offset(r = 1.8, $fn=24) square([6, 0.001]);
+  }
 }
 
 module bottom_shell() {
@@ -144,16 +146,16 @@ module bottom_shell() {
     // FIXME: corner radii are eyeballed
     round_box(BOX_DIMENSIONS, box_corners, WALL_THICKNESS);
 
-    translate([0, BOX_LENGTH, pi_hole_height]) rotate([90, 0, -90]) scale([1, 1, 4])
+    translate([0, BOX_LENGTH, pi_hole_height]) rotate([90, 0, -90]) linear_extrude(WALL_THICKNESS)
       left_holes();
-    translate([BOX_WIDTH, 0, 0]) rotate([90, 0, 90]) scale([1, 1, 4])
+    translate([BOX_WIDTH, 0, 0]) rotate([90, 0, 90]) linear_extrude(WALL_THICKNESS)
       right_holes();
-    translate([0, BOX_LENGTH, 0]) rotate([90, 0]) scale([1, 1, 4])
+    translate([0, BOX_LENGTH, 0]) rotate([90, 0, 180]) linear_extrude(WALL_THICKNESS)
       back_holes();
   }
   // FIXME: Positions/dimensions of shelves are eyeballed
-  translate([64,  BOX_LENGTH, 24]) display_shelf();
-  translate([138, BOX_LENGTH, 24]) display_shelf();
+  translate([64,  BOX_LENGTH, BOX_HEIGHT - 4]) display_shelf();
+  translate([138, BOX_LENGTH, BOX_HEIGHT - 4]) display_shelf();
   // FIXME: Positions/dimensions of supports are eyeballed
   translate([25, BOX_LENGTH - 5,  0]) rpi_support();
   translate([25, BOX_LENGTH - 50, 0]) rpi_support();
