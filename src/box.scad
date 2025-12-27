@@ -68,7 +68,8 @@ KEYBOARD_WIDTH = 153.00;
 
 WALL_THICKNESS = 1.60;
 
-RPI_BOARD_HEIGHT = 2.95;
+RPI_BOTTOM_CLEARANCE = 2.3;
+RPI_PCB_THICKNESS = 1.5;
 RPI_LENGTH = 57.50;
 
 BOX_WIDTH = BATTERY_WIDTH;
@@ -77,9 +78,8 @@ BOX_HEIGHT = BATTERY_THICKNESS + KEYBOARD_THICKNESS;
 BOX_DIMENSIONS = [BOX_WIDTH, BOX_LENGTH, BOX_HEIGHT];
 
 module rpi_support() {
-  base_height = 3.5; // stolen from original pi_hole_height variable, needs confirmation
-  cylinder(base_height, r=3, $fn=24);
-  translate([0, 0, base_height]) cylinder(3, r=1.5, $fn=24);
+  cylinder(RPI_BOTTOM_CLEARANCE, r=2.9, $fn=24);
+  translate([0, 0, RPI_BOTTOM_CLEARANCE]) cylinder(2, r=1.15, $fn=24);
 }
 
 module display_shelf() {
@@ -124,44 +124,59 @@ module left_holes() {
 
 /// Holes for power bank's ports
 module right_holes() {
-  translate([21.5, 8.1]) offset(r = 3, $fn=24) square([6, 0.001]);
-  translate([46.2, 3.5]) square([17, 9.4]);
+  translate([21.5, BATTERY_THICKNESS / 2]) offset(r = 3, $fn=24) square([6, 0.001]);
+  translate([54.7, BATTERY_THICKNESS / 2]) square([17, 9.4], center=true);
 }
 
 /// Holes for other RPi ports
 module back_holes() {
+  offset(r = 0.1) // This makes the holes a tiny bit bigger so the ports line up easier
   scale([-1, 1]) {
-    translate([34.2, 6.1]) circle(3.265, $fn=24);
-    translate([45, 2.95]) square([7.5, 3.9]);
-    translate([58.5, 2.95]) square([7.5, 3.9]);
-    translate([73.8, 2.95 + (3.6 / 2)]) offset(r = 1.8, $fn=24) square([6, 0.001]);
+    translate([34.4, 3.265]) circle(3.265, $fn=24);
+    translate([45.2, -0.5]) square([7.2, 3.8]);
+    translate([58.7, -0.5]) square([7.2, 3.8]);
+    translate([74, 1.6]) offset(r = 1.6, $fn=24) square([6, 0.001]);
   }
 }
 
 module bottom_shell() {
-  pi_hole_height = 3.5; // FIXME: This will need adjustment thanks to the new supports
-  box_corners = [0, 0, 3, 6];
+  pi_hole_height = RPI_BOTTOM_CLEARANCE + RPI_PCB_THICKNESS;
+  box_corners = [1.5, 1.5, 5, 7];
 
   difference() {
-    // FIXME: corner radii are eyeballed
     round_box(BOX_DIMENSIONS, box_corners, WALL_THICKNESS);
 
     translate([0, BOX_LENGTH, pi_hole_height]) rotate([90, 0, -90]) linear_extrude(WALL_THICKNESS)
       left_holes();
     translate([BOX_WIDTH, 0, 0]) rotate([90, 0, 90]) linear_extrude(WALL_THICKNESS)
       right_holes();
-    translate([0, BOX_LENGTH, 0]) rotate([90, 0, 180]) linear_extrude(WALL_THICKNESS)
+    translate([0, BOX_LENGTH, pi_hole_height]) rotate([90, 0, 180]) linear_extrude(WALL_THICKNESS)
       back_holes();
+
+    // TODO: U-shaped cut for the display's brightness button
+    // TODO: Shrink box slightly and add divet to hold keyboard bump on side
   }
-  // FIXME: Positions/dimensions of shelves are eyeballed
-  translate([64,  BOX_LENGTH, BOX_HEIGHT - 4]) display_shelf();
-  translate([138, BOX_LENGTH, BOX_HEIGHT - 4]) display_shelf();
-  // FIXME: Positions/dimensions of supports are eyeballed
-  translate([25, BOX_LENGTH - 5,  0]) rpi_support();
-  translate([25, BOX_LENGTH - 50, 0]) rpi_support();
-  translate([90, BOX_LENGTH - 5,  0]) rpi_support();
-  translate([90, BOX_LENGTH - 50, 0]) rpi_support();
+  // Shelves to hold the display
+  shelf_center_dist = 99.2;
+  translate([44,  BOX_LENGTH, BOX_HEIGHT - 7.8]) display_shelf();
+  translate([44 + shelf_center_dist, BOX_LENGTH, BOX_HEIGHT - 7.8]) display_shelf();
+
+  // Supports to hold the Pi above the floor
+  pi_screw_width = 49;
+  pi_screw_length = 57.7;
+  translate([27, BOX_LENGTH - 5,  0]) rpi_support();
+  translate([27, BOX_LENGTH - 50, 0]) rpi_support();
+  translate([27 + pi_screw_length, BOX_LENGTH - 5,  0]) rpi_support();
+  translate([27 + pi_screw_length, BOX_LENGTH - 50, 0]) rpi_support();
+
+  // TODO: Holes for face plate screws
+
+  // TODO: Lines along wall to help hold battery in place
+
+  // Small indent to make up width difference between battery and keyboard
+  translate([0, 24, 0]) cube([1, 24, BATTERY_THICKNESS*0.7]);
 }
 
 bottom_shell();
+// scale([2, -1]) text("U", halign="center", valign="center"); // Button for brightness
 
