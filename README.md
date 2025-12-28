@@ -9,7 +9,6 @@ A Glueless, Solderless Raspberry Pi 4 Cyberdeck
 - Miniature 5V Cooling Fan (optional; recommended) \[[link](https://www.adafruit.com/product/4468)\]
 - 4.3 Inch 800x480 DSI Touch Screen \[[link](https://www.aliexpress.com/item/3256807896146352.html)\]
 - Rii X1 2.4GHz Mini Wireless Keyboard (be sure to select the correct language/layout for your needs!) \[[link](https://www.aliexpress.com/item/3256804879544433.html)\]
-- 4.3 Inch DSI Touch Screen 800x480px \[[link](https://www.aliexpress.com/item/3256807896146352.html)\]
 - Anker 10,000mAh, 22.5W Power Bank (Note that this one is 6 inches long! Newer models are smaller and their ports are arranged slightly different) \[[link](https://www.bestbuy.com/product/anker-power-bank-10000mah-22-5w-black/JJ858RCW2K/)\]
 - Two 90-degree USB-C adapters (optional) \[[link](https://www.amazon.com/gp/product/B0BNMDRWR6)\]
 
