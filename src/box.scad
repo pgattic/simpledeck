@@ -153,7 +153,7 @@ module right_holes() {
 
 /// Holes for other RPi ports
 module back_holes() {
-  offset(r = 0.1) // This makes the holes a tiny bit bigger so the ports line up easier
+  offset(r = 0.2) // This makes the holes a tiny bit bigger so the ports line up easier
   scale([-1, 1]) {
     translate([0, RPI_HOLE_HEIGHT]) {
       translate([34.4, 3.265]) circle(3.265, $fn=24);
@@ -180,6 +180,12 @@ module bottom_shell() {
       back_holes();
 
     translate([BOX_WIDTH+1, 34, BATTERY_THICKNESS+3]) rotate([0, -90, 0]) cylinder(r=5, 3, $fn=24);
+    // Lanyard hole
+    translate([BOX_WIDTH, 0, BATTERY_THICKNESS/2]) rotate_extrude() {
+        translate([6, 0, 0]) {
+            circle(r = 2, $fn=24);
+        }
+    }
   }
   // Shelves to hold the display
   shelf_center_dist = 99.2;
