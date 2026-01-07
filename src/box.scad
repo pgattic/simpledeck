@@ -123,8 +123,8 @@ module display_shelf() {
 module screw_hole() {
   fn = 24;
   h = 4;
-  o_rad = 2.5;
-  i_rad = 1.5;
+  o_rad = 2;
+  i_rad = 1;
   translate([0, -o_rad, -h]) difference() {
     union() {
       cylinder(h, r=o_rad, $fn=fn);
@@ -141,8 +141,8 @@ module screw_hole() {
 module left_holes() {
   translate([0, RPI_HOLE_HEIGHT+1.5]) {
     translate([3,    0]) square([13, 14.3]);
-    translate([20.5, 0]) square([13, 14.3]);
-    translate([39.4, -1]) square([13, 11.5]);
+    translate([21, 0]) square([13, 14.3]);
+    translate([40, -1]) square([13, 11]);
   }
   translate([BOX_LENGTH - KEYBOARD_LENGTH + 14, BOX_HEIGHT-7]) offset(r = 1.6, $fn=24) square([28, 7]);
 }
@@ -164,7 +164,7 @@ module back_holes() {
       translate([74, 1.6]) offset(r = 1.8, $fn=24) square([6, 0.001]);
     }
     // Button for brightness
-    translate([126.5, BOX_HEIGHT - 10]) scale([.6, -.5]) text("U", halign="center", valign="center");
+    translate([126, BOX_HEIGHT - 10]) scale([.6, -.5]) text("U", halign="center", valign="center");
   }
 }
 
@@ -180,7 +180,7 @@ module bottom_shell() {
       right_holes();
     translate([0, BOX_LENGTH, 0]) rotate([90, 0, 180]) linear_extrude(WALL_THICKNESS)
       back_holes();
-    translate([126.5, BOX_LENGTH-2, BOX_HEIGHT-10]) sphere(r=2.5, $fn=24);
+    translate([126, BOX_LENGTH-2, BOX_HEIGHT-10]) sphere(r=2.5, $fn=24);
 
     translate([BOX_WIDTH+1, 34, BATTERY_THICKNESS+3]) rotate([0, -90, 0]) cylinder(r=5, 3, $fn=24);
     // Lanyard hole
@@ -198,10 +198,10 @@ module bottom_shell() {
   // Supports to hold the Pi above the floor
   pi_screw_width = 48.8;
   pi_screw_length = 57.7;
-  translate([27, BOX_LENGTH - 5,  0]) rpi_support(false);
-  translate([27, BOX_LENGTH - 5 - pi_screw_width, 0]) rpi_support();
-  translate([27 + pi_screw_length, BOX_LENGTH - 5,  0]) rpi_support(false);
-  translate([27 + pi_screw_length, BOX_LENGTH - 5 - pi_screw_width, 0]) rpi_support();
+  translate([27, BOX_LENGTH - 3.8,  0]) rpi_support(false);
+  translate([27, BOX_LENGTH - 3.8 - pi_screw_width, 0]) rpi_support();
+  translate([27 + pi_screw_length, BOX_LENGTH - 3.8,  0]) rpi_support(false);
+  translate([27 + pi_screw_length, BOX_LENGTH - 3.8 - pi_screw_width, 0]) rpi_support();
 
   // Holes for face plate screws
   screwhole_height = BOX_HEIGHT - 3;
