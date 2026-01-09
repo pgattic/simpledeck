@@ -144,7 +144,7 @@ module bottom_shell() {
     }
   }
   // Shelves to hold the display
-  shelf_center_dist = 99.2;
+  shelf_center_dist = 99.7;
   translate([43,  BOX_LENGTH, BOX_HEIGHT - 7.8]) display_shelf();
   translate([43 + shelf_center_dist, BOX_LENGTH, BOX_HEIGHT - 7.8]) display_shelf();
 
