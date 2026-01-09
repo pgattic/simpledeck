@@ -1,29 +1,10 @@
 
+include <constants.scad>
+
 module bottom_dome(radius) {
   difference() {
     sphere(radius, $fn=24);
     translate([-radius, -radius, 0]) cube([radius*2, radius*2, radius]);
-  }
-}
-
-module round_prism(dimensions, radii) {
-  assert(is_list(dimensions) && len(dimensions) == 3, "'dimensions' must be of the pattern [w, l, h]!");
-  assert(is_list(radii) && len(radii) == 4, "'radii' must be of the pattern [fl, fr, bl, br]!");
-  w = dimensions[0];
-  l = dimensions[1];
-  h = dimensions[2];
-  eps = 0.001;
-  fl = max(radii[0], eps);
-  fr = max(radii[1], eps);
-  bl = max(radii[2], eps);
-  br = max(radii[3], eps);
-
-  fn = 64;
-  hull() {
-    translate([bl, bl, 0]) cylinder(h, r=bl, $fn=fn); // bl
-    translate([w-br, br, 0]) cylinder(h, r=br, $fn=fn); // br
-    translate([fl, l-fl, 0]) cylinder(h, r=fl, $fn=fn); // fl
-    translate([w-fr, l-fr, 0]) cylinder(h, r=fr, $fn=fn); // fr
   }
 }
 
@@ -36,48 +17,6 @@ module round_box(dimensions, radii, wall_thickness) {
     round_prism([dimensions[0], dimensions[1], dimensions[2]+0.1], radii);
   }
 }
-
-/// Produces a rounded rectangular prism
-/// Uses a hull to allow lengths of 0, which a minkowski would fail at
-module rounded(dimensions, radius) {
-  d0 = dimensions[0];
-  d1 = dimensions[1];
-  d2 = dimensions[2];
-  fn = 24;
-  hull() {
-    sphere(radius, $fn=fn);
-    translate([d0, 0, 0]) sphere(radius, $fn=fn);
-    translate([0, d1, 0]) sphere(radius, $fn=fn);
-    translate([d0, d1, 0]) sphere(radius, $fn=fn);
-    translate([0, 0, d2]) sphere(radius, $fn=fn);
-    translate([d0, 0, d2]) sphere(radius, $fn=fn);
-    translate([0, d1, d2]) sphere(radius, $fn=fn);
-    translate(dimensions) sphere(radius, $fn=fn);
-  }
-}
-
-// CONSTANTS
-// All lengths in millimeters
-
-BATTERY_LENGTH = 71.50;
-BATTERY_THICKNESS = 16.20;
-BATTERY_WIDTH = 152.00;
-
-KEYBOARD_THICKNESS = 12.00;
-KEYBOARD_WIDTH = 153.00;
-KEYBOARD_LENGTH = 59.00;
-
-WALL_THICKNESS = 1.60;
-
-RPI_BOTTOM_CLEARANCE = 2.3;
-RPI_PCB_THICKNESS = 1.5;
-RPI_LENGTH = 56.50;
-RPI_HOLE_HEIGHT = RPI_BOTTOM_CLEARANCE + RPI_PCB_THICKNESS;
-
-BOX_WIDTH = BATTERY_WIDTH;
-BOX_LENGTH = BATTERY_LENGTH + RPI_LENGTH;
-BOX_HEIGHT = BATTERY_THICKNESS + KEYBOARD_THICKNESS;
-BOX_DIMENSIONS = [BOX_WIDTH, BOX_LENGTH, BOX_HEIGHT];
 
 module rpi_support(through_nub = true) {
   cylinder(RPI_BOTTOM_CLEARANCE, r=2.9, $fn=24);
@@ -140,17 +79,32 @@ module screw_hole() {
 /// Holes for RPi's USB and ethernet ports
 module left_holes() {
   translate([0, RPI_HOLE_HEIGHT+1.5]) {
-    translate([3,    0]) square([13, 14.3]);
-    translate([21, 0]) square([13, 14.3]);
+    translate([3,   0]) square([13, 14.3]);
+    translate([21,  0]) square([13, 14.3]);
     translate([40, -1]) square([13, 11]);
   }
   translate([BOX_LENGTH - KEYBOARD_LENGTH + 14, BOX_HEIGHT-7]) offset(r = 1.6, $fn=24) square([28, 7]);
+}
+
+module vent_holes() {
+  grid_width = 9;
+  grid_height = 3;
+  square_size = 3;
+  square_spacing = 4;
+
+  for (x = [0 : square_spacing : (grid_width-1) * square_spacing]) {
+      for (y = [0 : square_spacing : (grid_height-1) * square_spacing]) {
+          translate([x, y])
+              square(square_size);
+      }
+  }
 }
 
 /// Holes for power bank's ports
 module right_holes() {
   translate([21.5, BATTERY_THICKNESS / 2]) offset(r = 3.5, $fn=24) square([6, 0.001]);
   translate([55, BATTERY_THICKNESS / 2]) square([17.5, 10], center=true);
+  translate([76, 2.5]) vent_holes();
 }
 
 /// Holes for other RPi ports
@@ -169,10 +123,9 @@ module back_holes() {
 }
 
 module bottom_shell() {
-  box_corners = [1.5, 1.5, 6, 8];
 
   difference() {
-    round_box(BOX_DIMENSIONS, box_corners, WALL_THICKNESS);
+    round_box(BOX_DIMENSIONS, BOX_CORNERS, WALL_THICKNESS);
 
     translate([0, BOX_LENGTH, 0]) rotate([90, 0, -90]) linear_extrude(WALL_THICKNESS)
       left_holes();
@@ -207,8 +160,8 @@ module bottom_shell() {
   screwhole_height = BOX_HEIGHT - 3;
   translate([BOX_WIDTH, BOX_LENGTH - 8, screwhole_height]) rotate([0, 0, -90]) screw_hole();
   translate([0, BOX_LENGTH - 8, screwhole_height]) rotate([0, 0, 90]) screw_hole();
-  translate([BOX_WIDTH, KEYBOARD_LENGTH + 8, screwhole_height]) rotate([0, 0, -90]) screw_hole();
-  translate([0, KEYBOARD_LENGTH + 8, screwhole_height]) rotate([0, 0, 90]) screw_hole();
+  translate([BOX_WIDTH, BOX_LENGTH - DISPLAY_LENGTH + 8, screwhole_height]) rotate([0, 0, -90]) screw_hole();
+  translate([0, BOX_LENGTH - DISPLAY_LENGTH + 8, screwhole_height]) rotate([0, 0, 90]) screw_hole();
 
   // Small indent to make up width difference between battery and keyboard
   translate([0, 24, 0]) cube([0.5, 24, BATTERY_THICKNESS*0.7]);
